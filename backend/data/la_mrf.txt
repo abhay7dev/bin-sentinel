@@ -1,0 +1,88 @@
+LOS ANGELES MRF SPECIFICATIONS
+Facility: Los Angeles Sanitation — Athens Services MRF + Waste Management MRF (multiple facilities)
+City: Los Angeles, California
+Program Type: Single-stream curbside recycling (blue bin)
+Last Updated: February 2026
+
+--- PLASTICS ---
+Accepted plastic resin codes: #1 (PETE/PET), #2 (HDPE), and #5 (PP/Polypropylene).
+Plastic resin codes #3, #4, #6, and #7 are NOT accepted in LA's blue bin recycling.
+Black plastic of any resin code is NOT accepted. LA's MRFs use NIR optical sorting technology that cannot detect carbon-black pigmented polymers. Black plastic takeout containers, black plastic food trays, black plastic deli lids, black microwave meal trays — all go to trash.
+Plastic bottles and jugs accepted: water bottles, soda bottles, juice bottles, milk jugs, detergent jugs, shampoo bottles. Must be empty, rinsed, and caps left on (caps are now recycled — California AB 2659 requires bottle caps to stay with bottles).
+Plastic #5 containers accepted: yogurt containers, butter tubs, margarine containers (but NOT black microwave meal trays).
+Plastic bags and film plastics are NOT accepted in the blue bin. California law requires grocery stores to accept plastic bags for drop-off recycling — use store collection bins. LA Sanitation operates plastic film drop-off at transfer stations.
+Plastic clamshell containers (salad containers, berry clamshells, bakery packaging) are generally NOT accepted in most LA MRFs — they are too flat and lightweight for NIR optical sorters to detect and sort at belt speed. However, #1 PET clamshells may be accepted at some facilities. When in doubt, check with your hauler.
+Plastic cups (disposable cups, #6 polystyrene cups) are NOT accepted.
+Styrofoam (EPS) is NOT accepted. California has enacted restrictions on EPS food service ware. Dispose in trash.
+Rigid plastic items (toys, hangers, lawn furniture) are NOT accepted — only bottles, jugs, and specific #5 containers.
+Plastic six-pack rings and plastic netting are NOT accepted — tanglers.
+
+--- PAPER AND CARDBOARD ---
+Corrugated cardboard accepted. Break down flat. Do not leave cardboard in rain — wet cardboard loses fiber value and is rejected.
+Los Angeles has significant contamination from wet paper due to marine layer moisture and irrigation. Keep recyclables dry — a wet recycling load can be entirely rejected.
+Newspaper, magazines, catalogs, office paper, junk mail accepted.
+Paperboard (cereal boxes, tissue boxes) accepted. Remove plastic liners.
+Cartons (milk cartons, juice cartons, Tetra Pak) accepted — LA MRFs process laminated cartons.
+Paper bags accepted.
+Pizza boxes: LA Sanitation accepts pizza boxes with minor grease. If the grease has fully saturated and soaked through the cardboard, trash it or tear off the soiled portion.
+Shredded paper: place in a sealed paper bag marked "shredded paper". Loose shredded paper jams belt screens and is not recoverable.
+Receipts and thermal paper are NOT accepted.
+Paper coffee cups with polyethylene lining: Generally NOT accepted in LA's blue bin program. While some U.S. cities have begun accepting paper cups, Los Angeles has not officially added them to the accepted materials list as of 2024-2026. Dispose in trash or green bin if certified compostable.
+Waxed produce boxes (from produce markets, flower shops) are NOT accepted.
+
+--- GLASS ---
+Glass bottles and jars accepted: clear, brown, green.
+California Redemption Value (CRV) containers: CRV glass bottles can be returned to certified recyclers (rePlanet, retail drop-off, or certified centers) for the $0.05-$0.10 deposit refund. Putting CRV glass in the blue bin means you lose the deposit — the MRF receives the value, not you.
+Rinse glass containers. Remove metal lids (recycle separately in a steel can).
+Broken glass: wrap carefully in newspaper, seal, and label "broken glass." Broken glass in the bin creates injury hazards for collection workers and contaminates paper bales.
+Window glass, mirrors, drinking glasses, Pyrex, ceramics, light bulbs are NOT accepted.
+
+--- METALS ---
+Aluminum cans accepted. CRV aluminum cans can be returned for deposit refund at certified recyclers instead.
+Steel and tin cans accepted. Empty and rinse.
+Empty aerosol cans accepted.
+Aluminum foil and foil pans accepted if clean of food residue. Crumple into ball of at least 2 inches.
+Metal lids: place inside a steel can and crimp shut.
+Scrap metal: LA Sanitation accepts small scrap metal items curbside. Large items must go to a scrap yard.
+Wire hangers: NOT accepted — tanglers. Return to dry cleaners.
+
+--- TANGLERS ---
+LA's MRFs process enormous volumes given the city's population. Tangler shutdowns affect thousands of tons of material per day.
+NEVER place in blue bin:
+Plastic bags and plastic film — most common tangler in LA.
+Garden hoses.
+Extension cords, phone chargers, power cables.
+Christmas lights and string lights.
+Rope, twine, ribbon, baling wire.
+Clothing and textiles — donate to Goodwill, Salvation Army, or use LA's textile recycling drop-offs.
+Chains.
+Metal wire and wire fencing scraps.
+Six-pack rings and plastic netting.
+
+--- CALIFORNIA-SPECIFIC RULES ---
+California AB 827: bottle caps and lids must stay on bottles for recycling — do not remove caps.
+California CRV: all CRV-marked beverage containers (#1 PETE, #2 HDPE, #5 PP, glass, aluminum, bimetal) have a deposit that can be reclaimed at certified drop-off centers. Blue bin recycling is valid but forfeits the deposit.
+SB 1383 (2022): California mandates organics recycling. LA operates a separate green bin for food waste and yard waste. Food scraps, meat, dairy, bones, and food-soiled paper go in the green bin, not trash.
+Green bin organics: LA processes organics through anaerobic digestion and composting. Food waste, paper napkins, paper towels, and certified compostable serviceware go in the green bin.
+Do NOT put compostable serviceware in the blue recycling bin — it looks like plastic, contaminates plastic bales, and does not process correctly.
+
+--- SPECIAL DISPOSAL ---
+Electronics: LA Sanitation e-waste events and permanent drop-off at LA Sanitation SAFE Centers.
+Batteries: SAFE Centers or participating retailers (Home Depot, Best Buy). Lithium-ion batteries cause fires — never trash.
+Motor oil: AutoZone, O'Reilly, Jiffy Lube, and LA Sanitation SAFE Centers.
+Medications: LAPD, LASD, or DEA collection points.
+Paint: PaintCare drop-off at hardware stores.
+
+--- COMMON LA MISTAKES ---
+Putting plastic bags in the blue bin: most common cause of equipment shutdowns at LA MRFs.
+Leaving blue bin uncovered in rain: wet recyclables are rejected — the entire load has reduced value or is landfilled.
+Recycling black plastic takeout containers: NIR sorters cannot see them, they contaminate the sorted plastic stream.
+Missing #5 plastic containers like yogurt cups: These ARE accepted as of August 2023 under LA's "New Blue" program.
+Mixing green bin compostables (certified compostable containers) with blue bin recycling: contaminates plastic bales.
+Removing bottle caps before recycling: California law now requires caps to stay on bottles.
+Recycling disposable plastic cups (#6 polystyrene): NOT accepted — goes in trash.
+
+--- PROGRAM CHANGE NOTES ---
+August 2023: LA Sanitation implemented "New Blue" program, adding plastic #5 (polypropylene) to accepted plastics while eliminating #3, #4, #6, and #7.
+This change reflects market realities — there is demand for recycled #1, #2, and #5 plastics, but limited markets for other resin types.
+The goal is to reduce contamination and improve the quality of recycled material bales sent to end markets.

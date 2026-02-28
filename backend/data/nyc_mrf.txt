@@ -1,0 +1,104 @@
+NEW YORK CITY MRF SPECIFICATIONS
+Facility: Sims Municipal Recycling — Sunset Park Material Recovery Facility
+Address: South Brooklyn Marine Terminal, Sunset Park, Brooklyn, NY
+City: New York City (all five boroughs)
+Program Type: Single-stream curbside recycling (blue bin / clear bag)
+Contract: Sims holds a 40-year contract with DSNY. Current contracts expire 2034.
+Last Updated: February 2026
+
+--- FACILITY OVERVIEW ---
+The Sunset Park MRF is the largest commingled recycling facility in the United States as of 2026. It processes approximately 1,000 tons of material per day, handling three-quarters of NYC's plastic, metal, and glass recyclables. The facility uses 16 Autosort 4 NIR optical sorters from Tomra, Bollegraaf sorting systems designed by Van Dyk Recycling Solutions, ballistic separators from Stadler, and magnetic drums from Steinert US. Material arrives by barge via 850 feet of dock space, reducing truck miles by approximately 240,000 per year. The facility features approximately 2 miles of conveyor belts.
+
+--- PLASTICS ---
+NYC accepts ALL rigid plastic containers with resin codes #1 through #7 in the blue bin. This policy has been in place since April 2013 when DSNY expanded from #1-#2 only to all rigid plastics ahead of the Sunset Park MRF opening.
+Accepted rigid plastics: bottles, jugs, tubs, cups, clamshells, and containers of all resin codes #1-7. Must be empty and rinsed.
+CRITICAL EXCEPTION: Black plastic of any resin code is NOT accepted and cannot be processed. Sims' 16 Tomra Autosort 4 NIR optical sorters use near-infrared light to identify polymer type. Carbon-black pigmented plastics absorb NIR wavelengths entirely, returning no readable spectral signature. The sorter cannot distinguish what type of plastic it is and routes it to residual/landfill stream. Black plastic containers, black takeout trays, black deli containers — all go to trash regardless of resin code.
+Plastic bags, films, shrink wrap, bubble wrap, and flexible plastics are NOT accepted. NYC Local Law 142 requires supermarkets to accept plastic bags for drop-off — use any NYC grocery store collection bin.
+Plastic bags used as liner bags inside the recycling bin contaminate the entire load. Place loose recyclables directly in the bin or in a clear bag — never inside a plastic garbage bag.
+Styrofoam (EPS polystyrene) is NOT accepted. NYC has officially determined that polystyrene cannot be recycled. EPS foam cups, foam packaging, foam trays — all go to trash.
+Hard rigid plastic items accepted include: yogurt tubs, butter tubs, deli containers, shampoo bottles, detergent jugs, clamshell containers — all resin codes, all non-black colors.
+Remove caps and lids from bottles. Metal caps and lids go in recycling separately. Plastic caps and lids go in trash — they are too small for optical sorters to handle.
+Plastic straws, plastic cutlery, and plastic utensils are NOT accepted — too small for sorting equipment.
+
+--- PAPER AND CARDBOARD ---
+NYC paper goes to Pratt Industries, which operates a paper mill on Staten Island. Pratt accepts essentially all paper types — newsprint, office paper, magazines, books, wrapping paper, tissue paper, receipts, egg cartons, and cardboard.
+Pratt's guidance: "Give me every single piece of paper, no matter what type of paper." All paper is pulped together into a soup at the mill.
+Corrugated cardboard accepted. Must be broken down flat. Large quantities must be bundled with twine and placed flat next to bins — not stuffed inside bins where they take up volume and jam collection equipment.
+Newspaper, magazines, catalogs, office paper, junk mail, envelopes (including with plastic windows), books accepted.
+Paperboard (cereal boxes, tissue boxes, cracker boxes, shoe boxes) accepted.
+Cartons accepted: milk cartons, juice cartons, Tetra Pak, broth cartons. Although cartons feel like paper, they are metal/plastic/glass and go in the blue bin with bottles and cans — NOT with paper.
+Paper bags accepted.
+Pizza boxes: accepted. NYC explicitly includes pizza boxes. Normal grease from pizza is acceptable and expected. A heavily saturated, fully grease-soaked box should go to the compost brown bin (see Organics section) — pizza boxes are listed as accepted compost materials in 2025-2026.
+Shredded paper: place in a sealed clear plastic bag or sealed paper bag before putting in recycling. Loose shredded paper falls through belt gaps and is unrecoverable.
+Paper coffee cups with polyethylene lining: accepted since 2025 DSNY policy update — DSNY now says to recycle paper cups with the bottles and cans stream, not paper stream.
+Waxed cardboard is NOT accepted.
+
+--- GLASS ---
+Glass bottles and jars accepted: clear, brown, and green glass. Must be empty and rinsed.
+Glass is sorted at Sims via disc screens that break glass and allow it to fall through to a dedicated stream below, separate from paper and plastic sorting lines.
+Broken glass: wrap carefully in newspaper or place in a sealed paper bag, label "broken glass" before placing in recycling. Loose broken glass creates serious laceration hazards for collection workers and for Sims facility workers.
+Window glass, mirrors, ceramics, Pyrex, drinking glasses, light bulbs, and candle holders are NOT accepted. DSNY notes there is "often no way for a layman to know" which glass is recyclable versus not — for ambiguous decorative glass items, DSNY's current guidance (2026) is to put them in recycling and let the facility handle it.
+
+--- METALS ---
+Aluminum cans accepted. Empty and rinse. NYC has a 5-cent bottle bill deposit — CRV-marked cans can be returned to stores for the deposit refund instead.
+Steel and tin food cans accepted. Empty and rinse. Paper labels can remain.
+Empty aerosol cans accepted.
+Aluminum foil and foil trays accepted. Crumple into a ball larger than 2 inches to prevent falling through belt gaps.
+Small metal appliances (toasters, electric kettles, microwaves) accepted — small appliances made mostly of metal or plastic without rechargeable batteries can be placed in recycling per 2025 DSNY guidance.
+Metal caps and lids from glass jars: accepted in recycling bin. Put them loose in the bin — DSNY no longer requires them to be placed inside a can.
+Plastic caps and lids: go in trash — too small for optical sorters.
+Wire hangers are NOT accepted — tanglers. Return to dry cleaners.
+Large scrap metal and bulk metal items: place curbside next to (not in) the recycling bin. DSNY picks up up to 6 bulk items per collection day, no appointment needed. Metal and rigid plastic bulk items go with recycling pickup.
+
+--- ORGANICS (NEW — MANDATORY AS OF 2024/2025) ---
+NYC launched mandatory citywide curbside composting in October 2024 under the Zero Waste Act (Local Law 85 of 2023). This is a major change from the previous MRF file and affects what goes in the recycling blue bin vs. the new compost brown bin.
+Composting is collected in a brown bin (or any lidded bin up to 55 gallons labeled for compost) on the same day as recycling pickup.
+Items that now go in the COMPOST brown bin, NOT recycling or trash:
+- All food scraps: fruit, vegetables, meat, fish, bones, dairy, prepared food, cooked food, bread, grains, coffee grounds, tea bags, eggshells
+- Food-soiled paper: pizza boxes, paper napkins, paper towels, uncoated paper plates, greasy paper bags
+- Yard waste: leaves, grass clippings, branches
+- Certified compostable serviceware labeled "BPI Certified Compostable" — goes in compost, NOT recycling
+Enforcement: Fines began April 1, 2025. Fine structure as of 2026: buildings 1-8 units: $25/$50/$100 for 1st/2nd/3rd offense. Buildings 9+ units: $100/$200/$300. Note: enforcement was briefly paused for smaller buildings in April 2025, then resumed with full enforcement across all building sizes by end of 2025/2026.
+Do NOT put compostable serviceware in the blue recycling bin — it looks like plastic to NIR optical sorters but contaminates plastic bales.
+Pizza boxes: can go in either compost (preferred if soiled) or recycling (if lightly greasy). NYC's current guidance treats lightly greasy pizza boxes as acceptable in both streams.
+
+--- TANGLERS ---
+Sims Sunset Park MRF processes 1,000 tons per day. Tangler shutdowns at this scale affect enormous material volumes.
+NEVER place in NYC blue recycling bin:
+Plastic bags and plastic film — the most common tangler in NYC; NYC Local Law 142 requires store drop-off.
+Garden hoses of any material or length.
+Extension cords, phone chargers, USB cables, electrical cables.
+Christmas lights and decorative string lights.
+Ropes, twine, string, ribbon, yarn, fishing line.
+Clothing and textiles — NYC has a free DSNY textile recycling program with in-building pickup service for buildings, plus drop-off bins at schools and libraries.
+Wire hangers — return to dry cleaners.
+Chains of any length.
+Rubber bands in large quantities.
+
+--- NYC-SPECIFIC 2025/2026 RULES ---
+Containerization: All trash must be in lidded bins (55 gallons or less) for buildings with 1-9 units. Bags-only setout is being phased out to reduce rat access. Buildings 10+ units have specific containerization requirements. This applies to trash, not recyclables.
+Clear bags: Recyclables may be placed in CLEAR plastic bags (not black trash bags) or in bins labeled with blue recycling decals.
+Setout timing: Containers can be set out after 6 PM the night before collection. Bags-only setout after 8 PM. All must be curbside by midnight.
+Mandatory recycling: All NYC residents and businesses are required to recycle. Contamination fines of up to $100 apply.
+Hard plastics accepted: Since 2013, NYC accepts all rigid plastics #1-7 (excluding black plastic). DSNY's current 2026 stance: "If you think it might be recyclable, let us handle the sorting." For genuinely ambiguous rigid plastic items, DSNY encourages putting them in recycling over trash.
+Gadgets with rechargeable batteries: Do NOT recycle. Lithium-ion batteries cause fires at MRFs. Take to electronics drop-off (90+ permanent e-waste sites across NYC) or participating retailers (Best Buy, Staples, Home Depot).
+Vape pens: Do NOT recycle or trash. They contain lithium batteries and are a fire hazard. Take to DSNY SAFE disposal events.
+Cartons clarification: Milk cartons, juice cartons, Tetra Pak, broth cartons go in the blue bin with metals/glass/plastics — NOT with paper, despite feeling like paper.
+
+--- SPECIAL DISPOSAL ---
+Electronics: 90+ permanent e-waste drop-off sites citywide (ecycleNYC). Electronics are banned from NYC trash by NYS law — $100 fine. Also: manufacturer take-back programs, Best Buy, Staples.
+Batteries (all types): DSNY SAFE events, Home Depot, Lowe's, Best Buy, Staples. Lithium-ion batteries are a fire risk in collection trucks — never trash.
+Medications: NYPD precinct drop boxes, CVS and Walgreens take-back kiosks.
+Hazardous household waste: DSNY SAFE (Special Waste) disposal events, held twice yearly in spring and fall across all 5 boroughs. Also accepts nail polish, fire extinguishers, vape pens.
+Textiles: Free DSNY textile recycling with in-building collection service for NYC residents, businesses, schools, and nonprofits. Also green drop-off bins at schools and libraries.
+Paint: PaintCare drop-off at hardware stores.
+
+--- COMMON NYC MISTAKES (2026) ---
+Bagging recyclables in a black trash bag before putting in bin: entire load rejected, plastic bag wraps around Sims conveyor equipment. Use CLEAR bags or place loose in bin.
+Recycling black plastic deli/takeout containers: Sims' 16 Tomra NIR sorters cannot detect carbon-black pigment — item goes to landfill regardless and may contaminate nearby items.
+Putting soft plastics (plastic bags, bread bags, zip-lock bags) in recycling: tanglers that shut down sorting lines.
+Putting vape pens or lithium batteries in recycling or trash: fire hazard at collection trucks and at Sims facility — take to e-waste drop-off.
+Putting compostable serviceware in blue bin: contaminates plastic bales — put in brown compost bin.
+Not separating food scraps: mandatory since October 2024, enforceable fines since 2025. Food scraps in trash are now a violation.
+Styrofoam in recycling: EPS is officially unrecyclable in NYC — always trash.
+Putting cartons in the paper recycling stream: cartons (Tetra Pak, juice boxes, milk cartons) go in blue bin with bottles and cans, not with paper.

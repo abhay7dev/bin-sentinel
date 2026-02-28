@@ -1,0 +1,242 @@
+SEATTLE MRF SPECIFICATIONS
+Facility: Recology King County Materials Recovery Facility (MRF), SODO
+Curbside Hauler: Recology King County (formerly CleanScapes)
+City: Seattle, Washington
+Program Type: Single-stream curbside recycling
+Last Updated: 2024
+
+NOTE ON SOURCING: This document was compiled from Recology King County's official
+Seattle recycling FAQ, Seattle Public Utilities (SPU) guidance, a January 2024 Seattle
+Times editorial board tour of the Recology King County MRF, and UW Sustainability
+recycling documentation. Where a claim could not be verified against these official
+sources, it is flagged [UNVERIFIED].
+
+-------------------------------------------------------------------
+PLASTICS
+-------------------------------------------------------------------
+
+SEATTLE'S APPROACH: Ignore the resin code number. SPU and Recology explicitly advise
+residents NOT to sort by the numbered triangle symbol. Instead, focus on the physical
+form of the item: rigid vs. flexible.
+
+ACCEPTED — rigid plastic items:
+  - Bottles (all colors, all resin codes): water bottles, soda bottles, shampoo,
+    detergent, condiment bottles, etc.
+  - Jugs (all colors): milk jugs, juice jugs, laundry detergent jugs.
+  - Food containers and trays.
+  - Dairy tubs (yogurt, sour cream, cottage cheese containers).
+  - Plastic cups (cold and hot drink cups — rigid only).
+  - Clear plastic clamshell containers (berry containers, salad containers, etc.).
+    Note: clamshells are technically harder to sort than bottles. Keep them clean
+    and empty to avoid contamination issues.
+  - Lids — accepted if 3 inches (7.6 cm) or wider. Smaller lids fall through
+    conveyor belt screens.
+  - Plastic plant pots.
+  - Plastic buckets.
+  - Pill bottles (not prescription vials).
+  - PVC pipe (white only).
+  - Household rigid plastic items: furniture, laundry baskets, storage bins, etc.
+  - All containers must be empty and rinsed.
+
+NOT ACCEPTED — regardless of resin code:
+  - Black plastic of any kind. NIR (Near-Infrared) optical sorters cannot detect
+    carbon-black pigmented polymers, which absorb infrared light. Black takeout
+    boxes, black plastic lids, black trays — all go to trash.
+  - Plastic bags, films, and flexible/stretchy plastic of any kind. These wrap
+    around conveyor belts and augers, triggering emergency shutdowns that can
+    halt sorting lines for up to an hour. Return to store drop-off locations
+    (most major grocery stores accept them). This has been in effect since
+    January 2020.
+    Examples: grocery bags, bread bags, Ziploc bags, cling wrap, bubble wrap,
+    dry cleaning bags, plastic wrap on paper towels/toilet paper.
+  - Styrofoam / EPS foam of any kind: blocks, packing peanuts, foam cups,
+    foam trays. Note: Washington State banned EPS foam food service products
+    effective 2024.
+  - Compostable plastics (PLA, corn-based plastic). These look like regular
+    plastic but cannot be recycled and do not break down at a MRF. Place in
+    the food/yard (green) bin if labeled BPI Certified Compostable, or trash.
+
+MINIMUM ITEM SIZE: Larger than a standard credit card (approx. 3.37 x 2.125 inches).
+Smaller items fall through conveyor belt screens into the "fines" stream and are
+landfilled. [UNVERIFIED — specific size threshold not confirmed in official SPU sources;
+however, the general principle of minimum size is consistent with MRF operations.]
+
+-------------------------------------------------------------------
+PAPER AND CARDBOARD
+-------------------------------------------------------------------
+
+ACCEPTED:
+  - Corrugated cardboard. Must be flattened and dry. Break down all boxes.
+  - Newspaper, office paper, magazines, catalogs, junk mail.
+  - Envelopes, including windowed envelopes (the plastic window can remain).
+  - Paper bags.
+  - Paper cups.
+  - Paperboard: cereal boxes, cracker boxes, tissue boxes. Remove plastic liners.
+  - Cartons: milk cartons, juice boxes, Tetra Paks, aseptic containers, soy milk
+    cartons.
+  - Phone books and paperback books.
+  - Non-metallic wrapping paper.
+  - Frozen food boxes.
+
+NOT ACCEPTED:
+  - Wet or heavily soiled paper. Wet paper loses fiber integrity and contaminates
+    dry paper bales.
+  - Waxed cardboard (e.g., produce boxes from grocery stores). Wax coating
+    prevents fiber separation during repulping.
+  - Receipts, thermal paper, fax paper. Thermal coating contaminates paper bales.
+  - Shredded paper — NOT accepted loose. It falls through conveyor screens and
+    jams equipment. Place shredded paper in a sealed paper bag or small cardboard
+    box if putting in recycling.
+
+PIZZA BOXES: If the box is lightly greasy (bottom of box slightly stained), it is
+generally accepted. If heavily soaked through with grease, place in the trash or
+tear off the clean lid and recycle that portion. Grease can contaminate paper fiber
+bales and cause commodity buyers to reject entire bales.
+Note: The "25% grease rule" cited in some sources has not been confirmed in official
+SPU or Recology guidance. [UNVERIFIED — treat as a useful rule of thumb only.]
+
+-------------------------------------------------------------------
+GLASS
+-------------------------------------------------------------------
+
+ACCEPTED:
+  - Glass bottles and jars: clear, brown, and green.
+  - Must be empty and rinsed.
+
+NOT ACCEPTED:
+  - Broken glass. Shards embed in paper fiber bales and contaminate them, and
+    pose laceration hazards to MRF workers. If glass breaks in your bin,
+    double-bag it in plastic and place in trash.
+  - Window glass and mirrors.
+  - Light bulbs (incandescent and LED go to trash; fluorescent/CFL bulbs go to
+    LightRecycle.org drop-off locations — free).
+  - Ceramics, dishes, and Pyrex / heat-resistant glass. These have different
+    chemical compositions than container glass and contaminate glass cullet.
+
+-------------------------------------------------------------------
+METALS
+-------------------------------------------------------------------
+
+ACCEPTED:
+  - Aluminum cans. Must be empty and rinsed.
+  - Steel and tin cans. Must be empty and rinsed.
+  - Aerosol cans, if completely empty (shake to verify no liquid remains).
+  - Aluminum foil and foil trays, if clean (free of food residue). Crumple
+    multiple pieces together into a ball at least 2 inches in diameter so
+    individual small pieces don't fall through conveyor screens.
+  - Metal lids and caps: place inside a metal can and crimp the top closed so
+    they don't fall through belt gaps.
+  - Ferrous scrap metal and other scrap metals smaller than 2' x 2' x 2'.
+
+NOT ACCEPTED curbside:
+  - Large scrap metal, pots, pans, and appliances. Take to a scrap metal
+    dealer or SPU Transfer Station.
+
+-------------------------------------------------------------------
+TANGLERS (CRITICAL CONTAMINATION CATEGORY)
+-------------------------------------------------------------------
+
+Tanglers are among the top causes of MRF equipment shutdowns in Seattle.
+A single tangler can stop a sorting line for 30–60 minutes and can damage
+expensive machinery. NEVER put any of the following in the recycling bin:
+
+  - Garden hoses (any length or material) — one of the most damaging tanglers
+  - Extension cords and electrical cables
+  - Christmas lights and string lights
+  - Chains, ropes, and twine
+  - Clothing, textiles, and fabric of any kind
+  - Bed sheets, towels, and linens
+  - Plastic bags and plastic film (see Plastics section)
+  - Wire and metal cables
+  - Rubber bands in large quantities
+
+Source: Confirmed by 2024 Seattle Times editorial board tour of Recology's
+King County MRF, which described tanglers as capable of sabotaging "the vital
+and very expensive" sorting equipment.
+
+-------------------------------------------------------------------
+ORGANICS (SEPARATE STREAM — GREEN BIN)
+-------------------------------------------------------------------
+
+Seattle operates a separate food and yard waste composting program through
+Cedar Grove Composting.
+
+ACCEPTED in the green food/yard waste bin:
+  - All food scraps: fruit, vegetables, meat, fish, dairy, bread, grains,
+    coffee grounds, eggshells.
+  - Food-soiled paper: paper napkins, paper towels, paper plates, uncoated
+    paper bags.
+  - Compostable serviceware labeled "BPI Certified Compostable."
+  - Yard waste: grass clippings, leaves, branches, plants, untreated wood.
+
+IMPORTANT: Do NOT put compostables in the recycling bin. They contaminate
+recycling bales and do not break down at a MRF. This includes compostable
+plastics (PLA).
+
+-------------------------------------------------------------------
+ITEMS REQUIRING SPECIAL DISPOSAL
+-------------------------------------------------------------------
+
+  - Electronics (e-waste): Take to e-cycle drop-off. See ecyclewa.org — TVs,
+    computers, monitors accepted free.
+  - Batteries: Take to hazwastehelp.org drop-off locations or SPU Transfer
+    Stations (free). NEVER put lithium batteries in trash or recycling — they
+    are a fire hazard in compactor trucks and have caused truck fires.
+  - Medications: Use King County medication drop-off boxes.
+    See medtakebackwashington.org (free).
+  - Motor oil: Take to auto parts stores (AutoZone, O'Reilly accept used motor
+    oil). Or set next to recycling cart in a labeled 1-gallon container (free,
+    up to 2 gallons per collection day).
+  - Paint: Use PaintCare drop-off locations at paintcare.org/drop-off-sites (free).
+  - Syringes / sharps: Place in a hard plastic bottle or container. See
+    seattle.gov/utilities/sharps (free).
+  - Fluorescent light bulbs / CFLs: Take to lightrecycle.org drop-off (free).
+  - Clothes and textiles: Donate to thrift stores or use drop boxes.
+    See kingcounty.gov/threadcycle for recycling options.
+  - Plastic clamshells (if you want extra assurance): Ridwell offers a paid
+    subscription pickup service for clamshells in parts of Seattle if you want
+    to keep them out of the general single-stream bin.
+  - Plastic film / bags: Return to grocery store drop-off bins.
+    See nextrex.com for locations.
+
+-------------------------------------------------------------------
+COMMON MISTAKES AND THEIR CONSEQUENCES
+-------------------------------------------------------------------
+
+Putting a black plastic container in recycling:
+  NIR optical sorter cannot detect it. It passes through unsorted, is likely
+  landfilled anyway, and may contaminate nearby items on the belt.
+
+Putting a plastic bag in recycling:
+  Wraps around rotating auger shaft, triggers emergency stop, requires manual
+  removal, shuts down line for up to an hour. Significant safety risk and
+  operational cost.
+
+Leaving food residue in containers:
+  Contaminates paper fiber bales, causes mold, results in rejection of entire
+  bales by commodity buyers.
+
+Recycling broken glass:
+  Embeds in paper bales, causes laceration injuries to MRF workers, causes
+  bale rejection.
+
+Putting a garden hose in recycling:
+  Wraps around belt rollers. One of the most damaging tangler types. Can
+  damage expensive equipment and shut down operations for extended periods.
+
+Putting a lithium battery in the recycling or trash:
+  Puncture risk during compaction causes thermal runaway fires. Compactor
+  truck fires are a documented and serious consequence.
+
+"Wish-cycling" (putting non-recyclables in hoping they'll be recycled):
+  Contaminates good recyclable material, decreases bale value, and results
+  in more material going to landfill — not less.
+
+-------------------------------------------------------------------
+QUICK REFERENCE: SHAPE RULE FOR PLASTICS
+-------------------------------------------------------------------
+
+  RECYCLE if it is:  Rigid + bottle/jug/tub/cup/clamshell/container shape
+  TRASH if it is:    Flexible, stretchy, filmy, or foamy
+  TRASH if it is:    Black plastic (any shape)
+  COMPOST if it is:  Labeled BPI Certified Compostable
