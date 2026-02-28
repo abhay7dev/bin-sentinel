@@ -7,7 +7,7 @@ Read this file in full before writing any code. Do not deviate from the decision
 
 ## What This Project Does
 
-User points a phone camera at a disposable object → Google Cloud Vision API identifies the object →
+A software camera is always running, and when a disposable object comes into focus → Google Cloud Vision API identifies the object →
 LangChain RAG pipeline retrieves the relevant local MRF (Materials Recovery Facility) spec chunks →
 Claude Sonnet (via Perplexity API) reasons against those specs → Returns a RECYCLE / TRASH / COMPOST
 verdict with a specific, facility-referenced explanation.
@@ -147,7 +147,7 @@ No API key, no cost, no external dependency.
 ```
 # backend/.env.example
 PERPLEXITY_API_KEY=
-GOOGLE_APPLICATION_CREDENTIALS=./gcp-key.json
+GOOGLE_APPLICATION_CREDENTIALS=./service-account.json
 CHROMA_PERSIST_DIR=./chroma_db
 DATABASE_URL=sqlite:///./bin_sentinel.db
 ```
@@ -342,7 +342,7 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 
 ## Frontend Rules
 
-- Mobile-first. Must work on iOS Safari and Android Chrome.
+- Just a Camera, and verdicts and information appear via pop-ups
 - File input: `accept="image/*"` AND `capture="environment"` for rear camera.
 - City selector defaults to `seattle`.
 - Loading state: "Checking facility specs..."
@@ -358,4 +358,4 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 - Do not install packages outside the venv
 - Do not commit `.env`, `gcp-key.json`, `venv/`, or `chroma_db/`
 - Do not use `sudo npm install`
-- Do not start UI styling until backend pipeline works end-to-end on a real phone
+- Do not start UI styling until backend pipeline works end-to-end
