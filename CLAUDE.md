@@ -105,27 +105,54 @@ Embeddings are local (sentence-transformers). The LLM is Claude via Perplexity.
 
 ---
 
-## LLM: Claude via Perplexity Agent API
+## LLM: Claude via Perplexity Responses API
 
-Perplexity's Agent API is OpenAI-compatible. We use `ChatOpenAI` from `langchain-openai`
-pointed at Perplexity's endpoint. The model string for Claude Sonnet on Perplexity is
-`anthropic/claude-sonnet-4-5`.
+Perplexity's core `/responses` endpoint supports third-party models like Claude without search/tools when no `preset` or `tools` are specified. Use direct HTTP calls (OpenAI SDK won't work here) or Perplexity's official Python SDK.
+
+**Key requirements:**
+- Model: `anthropic/claude-sonnet-4-6` (confirm exact ID in [Perplexity models docs](https://docs.perplexity.ai/docs/agent-api/models))
+- Endpoint: `POST https://api.perplexity.ai/chat/completions/responses`
+- **No `preset` param** (disables search presets like `pro-search`)
+- **No `tools` array** (disables tool calling/web search)
+
+### Python Implementation (using `requests`)
 
 ```python
-from langchain_openai import ChatOpenAI
+import requests
 import os
+import json
 
-llm = ChatOpenAI(
-    model="anthropic/claude-sonnet-4-5",
-    openai_api_key=os.getenv("PERPLEXITY_API_KEY"),
-    openai_api_base="https://api.perplexity.ai",
-    temperature=0,
-    max_tokens=400
-)
+PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")
+base_url = "https://api.perplexity.ai/chat/completions"
+
+def call_claude(prompt: str, max_tokens: int = 400) -> str:
+    headers = {
+        "Authorization": f"Bearer {PERPLEXITY_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    
+    payload = {
+        "model": "anthropic/claude-sonnet-4-6",  # Pure Claude, no Perplexity search layer
+        "input": prompt,
+        "max_output_tokens": max_tokens,
+        "temperature": 0.1
+        # NO "preset" - disables search
+        # NO "tools" - disables tool calling
+    }
+    
+    response = requests.post(
+        f"{base_url}/responses", 
+        headers=headers, 
+        json=payload
+    )
+    response.raise_for_status()
+    
+    return response.json()["response"]["role"]  # Extract Claude's response
+
+# Usage
+result = call_claude("Explain monads in simple terms.")
+print(result)
 ```
-
-Do not use `ChatAnthropic`. Do not use `langchain-anthropic`. The LLM call goes through
-Perplexity, not Anthropic directly.
 
 ---
 

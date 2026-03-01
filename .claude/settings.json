@@ -1,0 +1,11 @@
+{
+    "permissions": {
+      "allow": [
+        "Bash(pip install *)",
+        "Bash(python *)",
+        "Bash(uvicorn *)",
+        "Bash(npm *)",
+        "Bash(git *)"
+      ]
+    }
+  }

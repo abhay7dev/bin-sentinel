@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+python-multipart
+langchain
+langchain-community
+langchain-openai
+langchain-huggingface
+langchain-text-splitters
+sentence-transformers
+chromadb==1.5.2
+google-cloud-vision
+sqlmodel
+python-dotenv
+perplexityai

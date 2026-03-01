@@ -1,0 +1,7 @@
+.env
+gcp-key.json
+venv/
+chroma_db/
+__pycache__/
+*.pyc
+bin_sentinel.db

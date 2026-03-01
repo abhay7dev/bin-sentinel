@@ -106,7 +106,7 @@ First, set up the Python virtual environment and install dependencies:
 
 8. Create a root-level .gitignore that also ignores backend/venv/ and backend/chroma_db/
 
-9. Create README.md with a one-paragraph project description and quickstart:
+9. Update README.md with a one-paragraph project description and quickstart:
    cd backend && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt
 
 Do not write vision.py, rag.py, or ingest.py yet.
