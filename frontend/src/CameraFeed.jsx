@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import CitySelector from "./CitySelector";
 import { ResultOverlay } from "./ResultCard";
+import { useClosestCity } from "./hooks/useClosestCity";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
@@ -42,7 +43,7 @@ export default function CameraFeed() {
   const intervalRef = useRef(null);
   const cityRef = useRef("seattle");
 
-  const [city, setCity] = useState("seattle");
+  const [city, setCity, locationStatus] = useClosestCity();
   const [status, setStatus] = useState("Starting camera...");
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -242,7 +243,7 @@ export default function CameraFeed() {
           <div className="text-white font-bold text-lg">Bin Sentinel</div>
           <div className="text-emerald-300 text-xs">Welcome — please hold your item up to the camera</div>
         </div>
-        <CitySelector value={city} onChange={setCity} />
+        <CitySelector value={city} onChange={setCity} locationStatus={locationStatus} />
       </div>
 
       {/* Bottom: Status text */}

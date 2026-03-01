@@ -2,12 +2,13 @@ import { useRef, useState } from "react";
 import axios from "axios";
 import CitySelector from "./CitySelector";
 import ResultCard from "./ResultCard";
+import { useClosestCity } from "./hooks/useClosestCity";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 export default function Scanner({ onScanComplete }) {
   const fileInputRef = useRef(null);
-  const [city, setCity] = useState("seattle");
+  const [city, setCity, locationStatus] = useClosestCity();
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
@@ -43,7 +44,7 @@ export default function Scanner({ onScanComplete }) {
   return (
     <div>
       <div className="flex items-center gap-3 mb-4">
-        <CitySelector value={city} onChange={setCity} />
+        <CitySelector value={city} onChange={setCity} locationStatus={locationStatus} />
         <button
           onClick={() => fileInputRef.current.click()}
           disabled={loading}
