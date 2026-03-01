@@ -58,36 +58,15 @@ function computeIoU(a, b) {
 }
 
 /**
- * Pick the most prominent object: high confidence + close to frame center.
- * Objects held up are typically in the center; person/background at edges.
+ * Pick the highest-confidence object (excluding person).
+ * Shows a box whenever something is detected, regardless of position.
  */
-function pickMostProminent(predictions, videoW, videoH) {
+function pickBestDetection(predictions, videoW, videoH) {
   const valid = predictions.filter(
     (p) => p.score >= MIN_SCORE && !IGNORED_CLASSES.has(p.class)
   );
   if (valid.length === 0) return null;
-
-  const centerX = 0.5;
-  const centerY = 0.45; // Slightly above center (item held up)
-
-  let best = null;
-  let bestProminence = 0;
-
-  for (const p of valid) {
-    const [x, y, w, h] = p.bbox;
-    const cx = (x + w / 2) / videoW;
-    const cy = (y + h / 2) / videoH;
-    const distFromCenter = Math.sqrt((cx - centerX) ** 2 + (cy - centerY) ** 2);
-    const centerWeight = Math.max(0, 1 - distFromCenter * 1.5); // 1 at center, 0 at edges
-    const prominence = p.score * (0.4 + 0.6 * centerWeight);
-
-    if (prominence > bestProminence) {
-      bestProminence = prominence;
-      best = p;
-    }
-  }
-
-  return best;
+  return valid.sort((a, b) => b.score - a.score)[0];
 }
 
 function getMotionDiff(ctx, prevData, width, height) {
@@ -142,7 +121,7 @@ export default function CameraFeed() {
 
   useEffect(() => {
     if (!result) return;
-    const t = setTimeout(() => setResult(null), 4000);
+    const t = setTimeout(() => setResult(null), 2500);
     return () => clearTimeout(t);
   }, [result]);
 
@@ -297,7 +276,7 @@ export default function CameraFeed() {
 
     try {
       const predictions = await model.detect(video);
-      const best = pickMostProminent(predictions, video.videoWidth, video.videoHeight);
+      const best = pickBestDetection(predictions, video.videoWidth, video.videoHeight);
 
       if (best) {
         missCountRef.current = 0;
