@@ -20,7 +20,8 @@ const MIN_SCORE = 0.35;
 const LERP_FACTOR = 0.7;
 const IOU_THRESHOLD = 0.2;
 const IGNORED_CLASSES = new Set(["person"]);
-const MAX_MISS_FRAMES = 8;
+/** Only clear the box / go to IDLE after this many consecutive frames with no detection. */
+const BOX_CLEAR_MISS_FRAMES = 5;
 
 // Motion fallback for objects COCO-SSD can't recognize
 const MOTION_FALLBACK_FRAMES = 8;
@@ -87,6 +88,53 @@ function getMotionDiff(ctx, prevData, width, height) {
   return { diff: sum / (count * 3), data: current };
 }
 
+/** Per-pixel change threshold to consider a pixel as "motion". */
+const MOTION_PIXEL_THRESHOLD = 20;
+
+/**
+ * Returns a normalized bbox {x, y, w, h} encompassing pixels that changed between
+ * current frame (from ctx) and prevData. Used to show a box around flexible packaging
+ * / wrappers that COCO-SSD doesn't detect.
+ */
+function getMotionBbox(ctx, prevData, width, height) {
+  if (!prevData) return null;
+  const current = ctx.getImageData(0, 0, width, height).data;
+  let minX = width;
+  let minY = height;
+  let maxX = 0;
+  let maxY = 0;
+  let found = false;
+  for (let y = 0; y < height; y += MOTION_SCAN_STEP) {
+    for (let x = 0; x < width; x += MOTION_SCAN_STEP) {
+      const i = (y * width + x) * 4;
+      const d =
+        (Math.abs(current[i] - prevData[i]) +
+          Math.abs(current[i + 1] - prevData[i + 1]) +
+          Math.abs(current[i + 2] - prevData[i + 2])) /
+        3;
+      if (d > MOTION_PIXEL_THRESHOLD) {
+        found = true;
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+  if (!found || maxX <= minX || maxY <= minY) return null;
+  const pad = 8;
+  const x = Math.max(0, minX - pad);
+  const y = Math.max(0, minY - pad);
+  const w = Math.min(width - x, maxX - minX + 2 * pad);
+  const h = Math.min(height - y, maxY - minY + 2 * pad);
+  return {
+    x: x / width,
+    y: y / height,
+    w: w / width,
+    h: h / height,
+  };
+}
+
 export default function CameraFeed() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -106,9 +154,13 @@ export default function CameraFeed() {
   const boxClearTimeoutRef = useRef(null);
 
   const noDetectCountRef = useRef(0);
+  /** Consecutive frames with no detection; only clear box / leave DETECTED when this reaches BOX_CLEAR_MISS_FRAMES. */
+  const consecutiveNoDetectRef = useRef(0);
   const motionPrevFrameRef = useRef(null);
   const motionStableRef = useRef(0);
   const motionActiveRef = useRef(false);
+  /** Bbox from motion when COCO-SSD has no detection (e.g. wrappers, chip bags). Cleared on COCO detection or when box is cleared. */
+  const motionBboxRef = useRef(null);
 
   const [city, setCity, locationStatus] = useClosestCity();
   const [status, setStatus] = useState("Loading object detector...");
@@ -156,12 +208,14 @@ export default function CameraFeed() {
     missCountRef.current = 0;
     lastDetectionRef.current = null;
     noDetectCountRef.current = 0;
+    consecutiveNoDetectRef.current = 0;
     motionPrevFrameRef.current = null;
     motionStableRef.current = 0;
     motionActiveRef.current = false;
     if (clearBox) {
       smoothBboxRef.current = null;
       setTrackingBox(null);
+      motionBboxRef.current = null;
     }
   }, []);
 
@@ -228,6 +282,7 @@ export default function CameraFeed() {
       setTimeout(() => {
         stateRef.current = STATES.IDLE;
         smoothBboxRef.current = null;
+        motionBboxRef.current = null;
         setTrackingBox(null);
         setStatus("Ready — hold up an item");
       }, COOLDOWN_MS);
@@ -247,6 +302,7 @@ export default function CameraFeed() {
       setTimeout(() => {
         stateRef.current = STATES.IDLE;
         smoothBboxRef.current = null;
+        motionBboxRef.current = null;
         setTrackingBox(null);
         setStatus("Ready — hold up an item");
       }, COOLDOWN_MS);
@@ -280,10 +336,12 @@ export default function CameraFeed() {
 
       if (best) {
         missCountRef.current = 0;
+        consecutiveNoDetectRef.current = 0;
         noDetectCountRef.current = 0;
         motionPrevFrameRef.current = null;
         motionStableRef.current = 0;
         motionActiveRef.current = false;
+        motionBboxRef.current = null;
 
         const normalized = normalizeBbox(best.bbox, video.videoWidth, video.videoHeight);
 
@@ -324,25 +382,23 @@ export default function CameraFeed() {
         }
       } else {
         noDetectCountRef.current += 1;
+        consecutiveNoDetectRef.current += 1;
 
-        if (stateRef.current === STATES.DETECTED) {
-          missCountRef.current += 1;
-          if (missCountRef.current >= MAX_MISS_FRAMES) {
+        if (consecutiveNoDetectRef.current >= BOX_CLEAR_MISS_FRAMES) {
+          smoothBboxRef.current = null;
+          motionBboxRef.current = null;
+          setTrackingBox(null);
+          if (stateRef.current === STATES.DETECTED) {
             stateRef.current = STATES.IDLE;
             stableCountRef.current = 0;
             missCountRef.current = 0;
             lastDetectionRef.current = null;
             setStatus("Ready — hold up an item");
-            if (boxClearTimeoutRef.current) clearTimeout(boxClearTimeoutRef.current);
-            boxClearTimeoutRef.current = setTimeout(() => {
-              smoothBboxRef.current = null;
-              setTrackingBox(null);
-              boxClearTimeoutRef.current = null;
-            }, 1500);
           }
-        } else {
-          smoothBboxRef.current = null;
-          setTrackingBox(null);
+          if (boxClearTimeoutRef.current) {
+            clearTimeout(boxClearTimeoutRef.current);
+            boxClearTimeoutRef.current = null;
+          }
         }
 
         // Motion fallback for objects COCO-SSD can't recognize
@@ -352,13 +408,20 @@ export default function CameraFeed() {
           canvas.height = video.videoHeight;
           ctx.drawImage(video, 0, 0);
 
-          const { diff, data } = getMotionDiff(ctx, motionPrevFrameRef.current, canvas.width, canvas.height);
+          const prevData = motionPrevFrameRef.current;
+          const { diff, data } = getMotionDiff(ctx, prevData, canvas.width, canvas.height);
           motionPrevFrameRef.current = data;
 
           if (diff > MOTION_DIFF_THRESHOLD) {
             motionActiveRef.current = true;
             motionStableRef.current = 0;
             setStatus("Object detected — hold still...");
+            const motionBox = prevData ? getMotionBbox(ctx, prevData, canvas.width, canvas.height) : null;
+            if (motionBox) {
+              motionBboxRef.current = motionBox;
+              setTrackingBox({ ...motionBox });
+              consecutiveNoDetectRef.current = 0;
+            }
           } else if (motionActiveRef.current) {
             motionStableRef.current += 1;
             if (motionStableRef.current >= MOTION_STABLE_FRAMES) {
