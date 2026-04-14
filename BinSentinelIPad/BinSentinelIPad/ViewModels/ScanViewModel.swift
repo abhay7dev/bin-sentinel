@@ -4,11 +4,12 @@ import UIKit
 
 @MainActor
 final class ScanViewModel: ObservableObject {
-    enum ScreenState {
+    enum ScreenState: Equatable {
         case idle
         case capturing
         case uploading
         case success
+        case noItem
         case failure
     }
 
@@ -25,12 +26,10 @@ final class ScanViewModel: ObservableObject {
         self.apiClient = apiClient
     }
 
-    /// Call after changing server URL in settings so history reflects the new backend.
     func onServerURLChanged() async {
         await refreshHistory()
     }
 
-    /// Server returns newest first; UI shows only the latest stored scan.
     var mostRecentHistoryScan: HistoryScan? {
         history.first
     }
@@ -46,11 +45,24 @@ final class ScanViewModel: ObservableObject {
         case .capturing:
             return "Capturing image..."
         case .uploading:
-            return "Checking facility specs..."
+            return "Classifying against facility specs..."
         case .success:
             return "Scan complete"
+        case .noItem:
+            return "No item detected"
         case .failure:
             return "Scan failed"
+        }
+    }
+
+    var statusIcon: String {
+        switch state {
+        case .idle: return "viewfinder"
+        case .capturing: return "camera.fill"
+        case .uploading: return "arrow.up.circle"
+        case .success: return "checkmark.circle.fill"
+        case .noItem: return "eye.slash"
+        case .failure: return "exclamationmark.triangle.fill"
         }
     }
 
@@ -60,9 +72,17 @@ final class ScanViewModel: ObservableObject {
 
         do {
             let result = try await apiClient.scan(image: image, city: selectedCity)
-            latestResult = result.shouldShowVerdictPopup ? result : nil
-            state = .success
+            if result.shouldShowVerdictPopup {
+                latestResult = result
+                state = .success
+            } else {
+                latestResult = nil
+                state = .noItem
+            }
             await refreshHistory()
+        } catch let error as APIClientError {
+            state = .failure
+            errorMessage = error.errorDescription
         } catch {
             state = .failure
             errorMessage = "Unable to complete scan. Check connection and try again."
@@ -76,13 +96,19 @@ final class ScanViewModel: ObservableObject {
         do {
             history = try await apiClient.fetchHistory()
         } catch {
-            // Keep this non-blocking for scan UX.
+            // Non-blocking for scan UX.
         }
     }
 
     func clearResult() {
         latestResult = nil
         if state != .uploading && state != .capturing {
+            state = .idle
+        }
+    }
+
+    func clearNoItem() {
+        if state == .noItem {
             state = .idle
         }
     }

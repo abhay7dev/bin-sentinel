@@ -2,10 +2,10 @@ import AVFoundation
 import CoreGraphics
 import Vision
 
-/// Maps live video buffer → normalized “metadata” rect (origin top-left) for `AVCaptureVideoPreviewLayer.layerRectConverted(fromMetadataOutputRect:)`.
+/// Maps live video buffer → normalized "metadata" rect (origin top-left) for `AVCaptureVideoPreviewLayer.layerRectConverted(fromMetadataOutputRect:)`.
 enum SalientRegionDetector {
-    /// Minimum salient area (normalized 0–1) before drawing a highlight.
-    private static let minimumArea: CGFloat = 0.04
+    private static let minimumArea: CGFloat = 0.03
+    private static let maximumArea: CGFloat = 0.85
 
     static func mostSalientMetadataRect(
         pixelBuffer: CVPixelBuffer,
@@ -13,26 +13,43 @@ enum SalientRegionDetector {
         cameraPosition: AVCaptureDevice.Position
     ) -> CGRect? {
         let imageOrientation = videoOrientation.cgImagePropertyOrientation(for: cameraPosition)
-        let request = VNGenerateAttentionBasedSaliencyImageRequest()
+
+        let objectnessReq = VNGenerateObjectnessBasedSaliencyImageRequest()
+        let attentionReq = VNGenerateAttentionBasedSaliencyImageRequest()
         let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: imageOrientation, options: [:])
         do {
-            try handler.perform([request])
-            guard let obs = request.results?.first as? VNSaliencyImageObservation else {
-                return nil
+            try handler.perform([objectnessReq, attentionReq])
+
+            let objectRegions = (objectnessReq.results?.first as? VNSaliencyImageObservation)?.salientObjects ?? []
+            let attentionRegions = (attentionReq.results?.first as? VNSaliencyImageObservation)?.salientObjects ?? []
+
+            let isFront = cameraPosition == .front
+
+            let validObjects = objectRegions.filter {
+                $0.boundingBox.area >= minimumArea && $0.boundingBox.area <= maximumArea
             }
-            let regions = obs.salientObjects ?? []
-            guard !regions.isEmpty else { return nil }
-            let best = regions.max(by: { $0.boundingBox.area < $1.boundingBox.area })!
-            guard best.boundingBox.area >= minimumArea else { return nil }
-            return visionBoundingBoxToMetadataRect(best.boundingBox)
+            if let bestObj = validObjects.max(by: { $0.confidence < $1.confidence }) {
+                return visionBoundingBoxToMetadataRect(bestObj.boundingBox, mirrorX: isFront)
+            }
+
+            let validAttention = attentionRegions.filter {
+                $0.boundingBox.area >= minimumArea && $0.boundingBox.area <= maximumArea
+            }
+            if let bestAtt = validAttention.max(by: { $0.confidence < $1.confidence }) {
+                return visionBoundingBoxToMetadataRect(bestAtt.boundingBox, mirrorX: isFront)
+            }
+
+            return nil
         } catch {
             return nil
         }
     }
 
-    /// Vision uses normalized coords, origin **bottom-left**.
-    private static func visionBoundingBoxToMetadataRect(_ vn: CGRect) -> CGRect {
-        CGRect(x: vn.minX, y: 1.0 - vn.maxY, width: vn.width, height: vn.height)
+    /// Vision normalized coords (origin bottom-left) → metadata coords (origin top-left).
+    /// Front camera preview is auto-mirrored by AVCaptureVideoPreviewLayer, so we flip x to match.
+    private static func visionBoundingBoxToMetadataRect(_ vn: CGRect, mirrorX: Bool) -> CGRect {
+        let x = mirrorX ? (1.0 - vn.maxX) : vn.minX
+        return CGRect(x: x, y: 1.0 - vn.maxY, width: vn.width, height: vn.height)
     }
 }
 
@@ -41,7 +58,6 @@ private extension CGRect {
 }
 
 extension AVCaptureVideoOrientation {
-    /// Orientation of pixel data for Vision (depends on front vs back camera).
     func cgImagePropertyOrientation(for cameraPosition: AVCaptureDevice.Position) -> CGImagePropertyOrientation {
         let front = cameraPosition == .front
         switch self {

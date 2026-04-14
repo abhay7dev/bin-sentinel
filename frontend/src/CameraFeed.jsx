@@ -5,23 +5,28 @@ import * as cocoSsd from "@tensorflow-models/coco-ssd";
 import CitySelector from "./CitySelector";
 import { ResultOverlay } from "./ResultCard";
 import { useClosestCity } from "./hooks/useClosestCity";
+import History from "./History";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 const STATES = { LOADING: "LOADING", IDLE: "IDLE", DETECTED: "DETECTED", SCANNING: "SCANNING", COOLDOWN: "COOLDOWN" };
-const DETECT_INTERVAL_MS = 300;
+const DETECT_INTERVAL_ACTIVE_MS = 250;
+const DETECT_INTERVAL_IDLE_MS = 500;
+const DETECT_INTERVAL_MS = DETECT_INTERVAL_ACTIVE_MS;
+const IDLE_ESCALATION_FRAMES = 20;
 const STABLE_FRAMES_NEEDED = 1;
 const COOLDOWN_MS = 2000;
 /** Fallback: trigger scan after this long in DETECTED if stability didn’t fire first. */
 const DETECTED_TRIGGER_MS = 500;
 const CAPTURE_WIDTH = 640;
 const SCAN_TIMEOUT_MS = 45000;
-const MIN_SCORE = 0.35;
-const LERP_FACTOR = 0.7;
+const MIN_SCORE = 0.45;
+const LERP_FACTOR = 0.35;
 const IOU_THRESHOLD = 0.2;
 const IGNORED_CLASSES = new Set(["person"]);
-/** Only clear the box / go to IDLE after this many consecutive frames with no detection. */
-const BOX_CLEAR_MISS_FRAMES = 5;
+const BOX_CLEAR_MISS_FRAMES = 8;
+const BOX_PAD_RATIO = 0.06;
+const MAX_JUMP_RATIO = 0.25;
 
 // Motion fallback for objects COCO-SSD can't recognize
 const MOTION_FALLBACK_FRAMES = 8;
@@ -85,10 +90,27 @@ function computeIoU(a, b) {
   return union > 0 ? inter / union : 0;
 }
 
-/**
- * Pick the highest-confidence object (excluding person).
- * Shows a box whenever something is detected, regardless of position.
- */
+function padBox(norm) {
+  const px = norm.w * BOX_PAD_RATIO;
+  const py = norm.h * BOX_PAD_RATIO;
+  return {
+    x: Math.max(0, norm.x - px),
+    y: Math.max(0, norm.y - py),
+    w: Math.min(1 - Math.max(0, norm.x - px), norm.w + 2 * px),
+    h: Math.min(1 - Math.max(0, norm.y - py), norm.h + 2 * py),
+  };
+}
+
+function clampedLerp(current, target, factor) {
+  const raw = lerpBox(current, target, factor);
+  const dx = Math.abs(raw.x - current.x);
+  const dy = Math.abs(raw.y - current.y);
+  if (dx > MAX_JUMP_RATIO || dy > MAX_JUMP_RATIO) {
+    return target;
+  }
+  return raw;
+}
+
 function pickBestDetection(predictions, videoW, videoH) {
   const valid = predictions.filter(
     (p) => p.score >= MIN_SCORE && !IGNORED_CLASSES.has(p.class)
@@ -189,12 +211,17 @@ export default function CameraFeed() {
   /** Bbox from motion when COCO-SSD has no detection (e.g. wrappers, chip bags). Cleared on COCO detection or when box is cleared. */
   const motionBboxRef = useRef(null);
 
+  const idleFrameCountRef = useRef(0);
+  const currentIntervalRef = useRef(DETECT_INTERVAL_ACTIVE_MS);
+
   const [city, setCity, locationStatus] = useClosestCity();
   const [status, setStatus] = useState("Loading object detector...");
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [scanning, setScanning] = useState(false);
   const [trackingBox, setTrackingBox] = useState(null);
+  const [historyKey, setHistoryKey] = useState(0);
+  const [showHistory, setShowHistory] = useState(false);
 
   useEffect(() => { cityRef.current = city; }, [city]);
 
@@ -294,6 +321,7 @@ export default function CameraFeed() {
         resetDetection();
         setScanning(false);
         setStatus("No item found — try again");
+        setHistoryKey((k) => k + 1);
         setTimeout(() => {
           if (stateRef.current === STATES.IDLE) {
             setStatus("Ready — hold up an item");
@@ -304,6 +332,7 @@ export default function CameraFeed() {
 
       setResult(res.data);
       setScanning(false);
+      setHistoryKey((k) => k + 1);
       stateRef.current = STATES.COOLDOWN;
       setStatus("");
       resetDetection(false);
@@ -356,6 +385,8 @@ export default function CameraFeed() {
     if (stateRef.current === STATES.COOLDOWN || stateRef.current === STATES.SCANNING || stateRef.current === STATES.LOADING) return;
     if (detectingRef.current) return;
 
+    idleFrameCountRef.current += 1;
+
     detectingRef.current = true;
 
     try {
@@ -366,17 +397,19 @@ export default function CameraFeed() {
         missCountRef.current = 0;
         consecutiveNoDetectRef.current = 0;
         noDetectCountRef.current = 0;
+        idleFrameCountRef.current = 0;
         motionPrevFrameRef.current = null;
         motionStableRef.current = 0;
         motionActiveRef.current = false;
         motionBboxRef.current = null;
 
-        const normalized = normalizeBbox(best.bbox, video.videoWidth, video.videoHeight);
+        const rawNorm = normalizeBbox(best.bbox, video.videoWidth, video.videoHeight);
+        const normalized = padBox(rawNorm);
 
         if (!smoothBboxRef.current) {
           smoothBboxRef.current = { ...normalized };
         } else {
-          smoothBboxRef.current = lerpBox(smoothBboxRef.current, normalized, LERP_FACTOR);
+          smoothBboxRef.current = clampedLerp(smoothBboxRef.current, normalized, LERP_FACTOR);
         }
         const rect = video.getBoundingClientRect();
         setTrackingBox(normalizedToDisplayBox(smoothBboxRef.current, rect, video.videoWidth, video.videoHeight));
@@ -488,10 +521,18 @@ export default function CameraFeed() {
     }
 
     startCamera();
-    intervalRef.current = setInterval(detectLoop, DETECT_INTERVAL_MS);
+    function tick() {
+      detectLoop().finally(() => {
+        const wantIdle = stateRef.current === STATES.IDLE && idleFrameCountRef.current > IDLE_ESCALATION_FRAMES;
+        const nextMs = wantIdle ? DETECT_INTERVAL_IDLE_MS : DETECT_INTERVAL_ACTIVE_MS;
+        currentIntervalRef.current = nextMs;
+        intervalRef.current = setTimeout(tick, nextMs);
+      });
+    }
+    intervalRef.current = setTimeout(tick, DETECT_INTERVAL_ACTIVE_MS);
 
     return () => {
-      clearInterval(intervalRef.current);
+      clearTimeout(intervalRef.current);
       if (stream) stream.getTracks().forEach((t) => t.stop());
     };
   }, [detectLoop]);
@@ -511,25 +552,52 @@ export default function CameraFeed() {
       <canvas ref={canvasRef} className="hidden" />
 
       {trackingBox && (
-        <div
-          className={`absolute pointer-events-none z-[5] ${scanning ? "animate-pulse" : ""}`}
-          style={{
-            left: `${trackingBox.left}%`,
-            top: `${trackingBox.top}%`,
-            width: `${trackingBox.width}%`,
-            height: `${trackingBox.height}%`,
-          }}
-        >
-          <div className={`absolute inset-0 rounded-2xl border-2 transition-shadow duration-300 ${
-            scanning
-              ? "border-emerald-400 shadow-[0_0_24px_rgba(16,185,129,0.6)]"
-              : "border-emerald-400/70 shadow-[0_0_12px_rgba(16,185,129,0.25)]"
-          }`} />
-          <div className="absolute -top-0.5 -left-0.5 w-10 h-10 border-t-[3px] border-l-[3px] border-emerald-300 rounded-tl-2xl" />
-          <div className="absolute -top-0.5 -right-0.5 w-10 h-10 border-t-[3px] border-r-[3px] border-emerald-300 rounded-tr-2xl" />
-          <div className="absolute -bottom-0.5 -left-0.5 w-10 h-10 border-b-[3px] border-l-[3px] border-emerald-300 rounded-bl-2xl" />
-          <div className="absolute -bottom-0.5 -right-0.5 w-10 h-10 border-b-[3px] border-r-[3px] border-emerald-300 rounded-br-2xl" />
-        </div>
+        <>
+          <svg className="absolute inset-0 w-full h-full pointer-events-none z-[4]" style={{ position: "absolute" }}>
+            <defs>
+              <mask id="blur-cutout">
+                <rect width="100%" height="100%" fill="white" />
+                <rect
+                  x={`${trackingBox.left}%`}
+                  y={`${trackingBox.top}%`}
+                  width={`${trackingBox.width}%`}
+                  height={`${trackingBox.height}%`}
+                  rx="16"
+                  fill="black"
+                />
+              </mask>
+            </defs>
+          </svg>
+          <div
+            className="absolute inset-0 pointer-events-none z-[4] transition-opacity duration-300"
+            style={{
+              backdropFilter: "blur(16px) brightness(0.5)",
+              WebkitBackdropFilter: "blur(16px) brightness(0.5)",
+              mask: "url(#blur-cutout)",
+              WebkitMask: "url(#blur-cutout)",
+            }}
+          />
+
+          <div
+            className={`absolute pointer-events-none z-[5] ${scanning ? "animate-pulse" : ""}`}
+            style={{
+              left: `${trackingBox.left}%`,
+              top: `${trackingBox.top}%`,
+              width: `${trackingBox.width}%`,
+              height: `${trackingBox.height}%`,
+            }}
+          >
+            <div className={`absolute inset-0 rounded-2xl border-2 transition-shadow duration-300 ${
+              scanning
+                ? "border-emerald-400 shadow-[0_0_24px_rgba(16,185,129,0.6)]"
+                : "border-emerald-400/70 shadow-[0_0_12px_rgba(16,185,129,0.25)]"
+            }`} />
+            <div className="absolute -top-0.5 -left-0.5 w-10 h-10 border-t-[3px] border-l-[3px] border-emerald-300 rounded-tl-2xl" />
+            <div className="absolute -top-0.5 -right-0.5 w-10 h-10 border-t-[3px] border-r-[3px] border-emerald-300 rounded-tr-2xl" />
+            <div className="absolute -bottom-0.5 -left-0.5 w-10 h-10 border-b-[3px] border-l-[3px] border-emerald-300 rounded-bl-2xl" />
+            <div className="absolute -bottom-0.5 -right-0.5 w-10 h-10 border-b-[3px] border-r-[3px] border-emerald-300 rounded-br-2xl" />
+          </div>
+        </>
       )}
 
       <div className="absolute top-0 left-0 right-0 z-10 bg-black/70 backdrop-blur-sm px-5 py-8 min-h-[7.5rem] flex items-center justify-center">
@@ -537,6 +605,7 @@ export default function CameraFeed() {
           <div className="text-center">
             <div className="text-white font-extrabold text-4xl tracking-tight">Bin Sentinel</div>
             <div className="text-emerald-300 text-lg mt-0.5">Hold your item up to the camera</div>
+            <div className="text-white/40 text-xs mt-1">Photos are not stored &middot; results use local facility specs</div>
           </div>
         </div>
         <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-auto">
@@ -582,6 +651,19 @@ export default function CameraFeed() {
           <div className="w-12 h-1.5 bg-white/30 rounded-full mx-auto mb-5" />
           <div className="font-bold text-2xl mb-3">Error</div>
           <div className="text-lg leading-relaxed">{error}</div>
+        </div>
+      )}
+
+      <button
+        onClick={() => setShowHistory((v) => !v)}
+        className="absolute bottom-4 left-4 z-10 bg-black/60 backdrop-blur-sm text-white/80 border border-white/20 rounded-full px-4 py-2 text-sm font-semibold active:bg-white/20 transition-colors"
+      >
+        {showHistory ? "Hide history" : "Recent scans"}
+      </button>
+
+      {showHistory && (
+        <div className="absolute bottom-16 left-4 right-4 z-10 max-h-[40vh] overflow-y-auto bg-black/80 backdrop-blur-md rounded-2xl p-4 border border-white/10">
+          <History refreshKey={historyKey} />
         </div>
       )}
     </div>

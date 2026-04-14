@@ -46,10 +46,15 @@ struct ResultOverlayView: View {
                 .foregroundStyle(.white.opacity(0.95))
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text("\(result.city) · tap to dismiss")
+            Text("Based on \(result.city.capitalized) facility specs")
+                .font(.caption)
+                .foregroundStyle(.white.opacity(0.5))
+                .padding(.top, 12)
+
+            Text("Tap to dismiss")
                 .font(.subheadline)
                 .foregroundStyle(.white.opacity(0.55))
-                .padding(.top, 18)
+                .padding(.top, 4)
         }
         .padding(.horizontal, 24)
         .padding(.top, 12)

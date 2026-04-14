@@ -40,9 +40,7 @@ struct CameraPreviewView: UIViewRepresentable {
 }
 
 final class PreviewView: UIView {
-    /// Called from `layoutSubviews` after applying the same orientation to the preview layer.
     var onVideoOrientationResolved: ((AVCaptureVideoOrientation) -> Void)?
-    /// Normalized metadata-output coordinates (origin top-left) for `layerRectConverted(fromMetadataOutputRect:)`.
     var highlightMetadataRect: CGRect?
 
     private let highlightBorderView: UIView = {
@@ -57,18 +55,33 @@ final class PreviewView: UIView {
         return v
     }()
 
+    private let blurView: UIVisualEffectView = {
+        let blur = UIBlurEffect(style: .dark)
+        let v = UIVisualEffectView(effect: blur)
+        v.isUserInteractionEnabled = false
+        v.alpha = 0.85
+        v.isHidden = true
+        return v
+    }()
+
+    private let blurMaskLayer = CAShapeLayer()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .black
         clipsToBounds = true
+        addSubview(blurView)
         addSubview(highlightBorderView)
+        blurView.layer.mask = blurMaskLayer
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         backgroundColor = .black
         clipsToBounds = true
+        addSubview(blurView)
         addSubview(highlightBorderView)
+        blurView.layer.mask = blurMaskLayer
     }
 
     override class var layerClass: AnyClass {
@@ -86,6 +99,8 @@ final class PreviewView: UIView {
         super.layoutSubviews()
         videoPreviewLayer.frame = bounds
         videoPreviewLayer.masksToBounds = true
+        blurView.frame = bounds
+
         guard let connection = videoPreviewLayer.connection else { return }
 
         let uiOrientation = window?.windowScene?.interfaceOrientation ?? .portrait
@@ -99,11 +114,25 @@ final class PreviewView: UIView {
 
         if let meta = highlightMetadataRect {
             let lr = videoPreviewLayer.layerRectConverted(fromMetadataOutputRect: meta)
+            let validBox = lr.width >= 2 && lr.height >= 2
+
             highlightBorderView.frame = lr
-            highlightBorderView.isHidden = lr.width < 2 || lr.height < 2
+            highlightBorderView.isHidden = !validBox
+            blurView.isHidden = !validBox
+
+            if validBox {
+                let fullPath = UIBezierPath(rect: bounds)
+                let cutout = UIBezierPath(roundedRect: lr, cornerRadius: 12)
+                fullPath.append(cutout)
+                fullPath.usesEvenOddFillRule = true
+                blurMaskLayer.fillRule = .evenOdd
+                blurMaskLayer.path = fullPath.cgPath
+            }
         } else {
             highlightBorderView.isHidden = true
+            blurView.isHidden = true
         }
+        bringSubviewToFront(blurView)
         bringSubviewToFront(highlightBorderView)
     }
 }

@@ -7,13 +7,12 @@ struct ScannerView: View {
     @StateObject private var viewModel = ScanViewModel()
     @StateObject private var locationProvider = LocationCityProvider()
     @State private var autoDismissTask: Task<Void, Never>?
+    @State private var noItemDismissTask: Task<Void, Never>?
     @State private var autoScanEnabled = true
     @State private var isAutoCooldown = false
-    /// Collapses city/scan controls so the camera preview uses more of the screen (e.g. iPhone).
     @State private var isScanPanelMinimized = false
     @State private var serverURLDraft = ""
     @State private var serverURLError: String?
-    /// When true, `selectedCity` follows GPS; debug menu sets this to false.
     @State private var useAutomaticCity = true
 
     var body: some View {
@@ -37,8 +36,21 @@ struct ScannerView: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .zIndex(50)
                 }
+
+                if viewModel.state == .noItem {
+                    noItemToast
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .zIndex(40)
+                }
+
+                if viewModel.isBusy {
+                    scanProgressPill
+                        .transition(.opacity)
+                        .zIndex(30)
+                }
             }
             .animation(.spring(response: 0.42, dampingFraction: 0.86), value: viewModel.latestResult?.id)
+            .animation(.easeInOut(duration: 0.3), value: viewModel.state)
             .background(Color.black)
             .task {
                 locationProvider.start()
@@ -62,6 +74,11 @@ struct ScannerView: View {
             }
             .onChange(of: viewModel.latestResult?.id) { _ in
                 scheduleAutoDismissResult()
+            }
+            .onChange(of: viewModel.state) { newState in
+                if newState == .noItem {
+                    scheduleNoItemDismiss()
+                }
             }
             .onChange(of: cameraService.autoCaptureSignal) { _ in
                 Task {
@@ -224,12 +241,39 @@ struct ScannerView: View {
 
             serverURLSection
                 .padding(.horizontal)
+
+            trustAndPrivacySection
+                .padding(.horizontal)
                 .padding(.bottom, 12)
                 }
                 .padding(.top, 8)
             }
         }
         .background(.regularMaterial)
+    }
+
+    private var trustAndPrivacySection: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Label("Local rules apply", systemImage: "building.2")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+
+            Text("Recycling rules vary by city. Results are based on \(viewModel.selectedCity.displayName) MRF facility specs and may not apply elsewhere.")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Label("Privacy", systemImage: "lock.shield")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .padding(.top, 4)
+
+            Text("Your photo is sent to the server for classification and is not stored. Only the scan result (item, action, city) is logged.")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.top, 8)
     }
 
     private var debugCitySection: some View {
@@ -360,6 +404,55 @@ struct ScannerView: View {
         try? await Task.sleep(nanoseconds: 2_000_000_000)
         if !Task.isCancelled {
             isAutoCooldown = false
+        }
+    }
+
+    private var scanProgressPill: some View {
+        VStack {
+            HStack(spacing: 10) {
+                ProgressView()
+                    .tint(.white)
+                Image(systemName: viewModel.statusIcon)
+                    .foregroundStyle(.white.opacity(0.8))
+                Text(viewModel.statusText)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white)
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 10)
+            .background(.black.opacity(0.7), in: Capsule())
+            .padding(.top, 8)
+            Spacer()
+        }
+    }
+
+    private var noItemToast: some View {
+        VStack {
+            HStack(spacing: 10) {
+                Image(systemName: "eye.slash")
+                    .foregroundStyle(.white.opacity(0.8))
+                Text("No item detected -- try again")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.white)
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 10)
+            .background(Color.orange.opacity(0.85), in: Capsule())
+            .padding(.top, 8)
+            Spacer()
+        }
+        .onTapGesture {
+            noItemDismissTask?.cancel()
+            viewModel.clearNoItem()
+        }
+    }
+
+    private func scheduleNoItemDismiss() {
+        noItemDismissTask?.cancel()
+        noItemDismissTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 2_500_000_000)
+            guard !Task.isCancelled else { return }
+            viewModel.clearNoItem()
         }
     }
 

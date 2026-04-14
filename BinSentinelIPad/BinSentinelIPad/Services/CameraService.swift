@@ -31,6 +31,11 @@ final class CameraService: NSObject, ObservableObject {
     private let saliencyMinInterval: CFTimeInterval = 0.35
     private let cameraPosition: AVCaptureDevice.Position = .front
 
+    private var smoothedRect: CGRect?
+    private var nilRectStreak = 0
+    private let nilGracePeriod = 5
+    private let smoothingFactor: CGFloat = 0.25
+
     func configureSession() async {
         let status = AVCaptureDevice.authorizationStatus(for: .video)
         authorizationStatus = status
@@ -129,13 +134,14 @@ extension CameraService: AVCaptureVideoDataOutputSampleBufferDelegate {
             if now - lastSaliencyAt >= saliencyMinInterval {
                 lastSaliencyAt = now
                 let orientation = connection.videoOrientation
-                let rect = SalientRegionDetector.mostSalientMetadataRect(
+                let rawRect = SalientRegionDetector.mostSalientMetadataRect(
                     pixelBuffer: pixelBuffer,
                     videoOrientation: orientation,
                     cameraPosition: cameraPosition
                 )
+                let finalRect = self.applySmoothing(rawRect)
                 DispatchQueue.main.async { [weak self] in
-                    self?.salientMetadataRect = rect
+                    self?.salientMetadataRect = finalRect
                 }
             }
         }
@@ -182,6 +188,30 @@ extension CameraService: AVCaptureVideoDataOutputSampleBufferDelegate {
         DispatchQueue.main.async { [weak self] in
             self?.motionLevel = normalized
         }
+    }
+
+    private func applySmoothing(_ raw: CGRect?) -> CGRect? {
+        guard let raw else {
+            nilRectStreak += 1
+            if nilRectStreak >= nilGracePeriod {
+                smoothedRect = nil
+            }
+            return smoothedRect
+        }
+        nilRectStreak = 0
+        guard let prev = smoothedRect else {
+            smoothedRect = raw
+            return raw
+        }
+        let a = smoothingFactor
+        let result = CGRect(
+            x: prev.minX + a * (raw.minX - prev.minX),
+            y: prev.minY + a * (raw.minY - prev.minY),
+            width: prev.width + a * (raw.width - prev.width),
+            height: prev.height + a * (raw.height - prev.height)
+        )
+        smoothedRect = result
+        return result
     }
 
     private func averageLuma(from pixelBuffer: CVPixelBuffer) -> Double? {
