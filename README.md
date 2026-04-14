@@ -14,6 +14,10 @@ Copy `.env.example` to `.env` and fill in your API keys, then start the server:
 uvicorn main:app --reload
 ```
 
+### Native iOS frontend
+
+A native SwiftUI app lives in `BinSentinelIPad/`. Open `BinSentinelIPad/BinSentinelIPad.xcodeproj` in Xcode to build and run on a simulator or device.
+
 ---
 
 ## Submission / Project Description

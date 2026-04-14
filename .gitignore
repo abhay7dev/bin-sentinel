@@ -3,3 +3,6 @@ service-account.json
 .DS_Store
 backend/venv/
 backend/chroma_db/
+**/xcuserdata/
+**/*.xcuserstate
+DerivedData/
