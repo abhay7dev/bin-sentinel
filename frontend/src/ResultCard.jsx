@@ -82,7 +82,8 @@ export function ResultOverlay({ item, action, reason, confidence, city, onDismis
       </div>
       {item && <div className="text-2xl font-semibold opacity-85 mb-3">{item}</div>}
       <div className="text-xl leading-relaxed">{reason}</div>
-      <div className="text-base opacity-50 mt-5">{city} &middot; tap to dismiss</div>
+      <div className="text-sm opacity-45 mt-4">Based on {city} facility specs &middot; local rules apply</div>
+      <div className="text-base opacity-50 mt-2">tap to dismiss</div>
     </div>
   );
 }

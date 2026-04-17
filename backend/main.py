@@ -6,11 +6,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlmodel import Session, select
 
-from classify import classify_image
+from classify import ClassificationError, classify_image
 from database import create_db_and_tables, engine
-from models import Scan
-from rag import get_facility_verdict
-
+from models import MAX_IMAGE_BYTES, Scan
 VALID_CITIES = {"seattle", "nyc", "la", "chicago"}
 
 
@@ -45,17 +43,35 @@ async def scan(image: UploadFile = File(None), city: str = Form("seattle")):
 
     image_bytes = await image.read()
 
+    if len(image_bytes) > MAX_IMAGE_BYTES:
+        return JSONResponse(
+            status_code=422,
+            content={
+                "error": "Image too large",
+                "detail": f"Max {MAX_IMAGE_BYTES // (1024*1024)} MB",
+            },
+        )
+
+    if len(image_bytes) == 0:
+        return JSONResponse(status_code=422, content={"error": "Empty image file"})
+
     try:
         result = classify_image(image_bytes, city)
+    except ClassificationError as e:
+        status = 503 if e.retryable else 500
+        content = {"error": "Classification error", "detail": str(e), "retryable": e.retryable}
+        if e.raw:
+            content["raw_snippet"] = e.raw[:200]
+        return JSONResponse(status_code=status, content=content)
     except Exception as e:
         return JSONResponse(
             status_code=500,
-            content={"error": "Classification error", "detail": str(e)},
+            content={"error": "Classification error", "detail": str(e), "retryable": False},
         )
 
+    meta = result.pop("_meta", {})
     result["city"] = city
 
-    # Don't log N/A results
     if result["action"] != "N/A":
         with Session(engine) as session:
             scan_record = Scan(
@@ -64,6 +80,8 @@ async def scan(image: UploadFile = File(None), city: str = Form("seattle")):
                 reason=result["reason"],
                 confidence=result["confidence"],
                 city=city,
+                model=meta.get("model", ""),
+                latency_ms=meta.get("total_ms"),
             )
             session.add(scan_record)
             session.commit()
@@ -88,7 +106,19 @@ async def scan_test(
     }
 
     try:
+        # Import lazily so the main API can still start even if optional RAG
+        # dependencies (e.g. embedding model downloads) are unavailable.
+        from rag import get_facility_verdict
+
         verdict = get_facility_verdict(synthetic, city)
+    except ImportError as e:
+        return JSONResponse(
+            status_code=503,
+            content={
+                "error": "RAG test endpoint unavailable",
+                "detail": f"RAG dependencies could not be initialized: {e}",
+            },
+        )
     except ValueError as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
     except Exception as e:

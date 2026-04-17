@@ -1,11 +1,15 @@
 """Single-call image classifier: sends image + full city MRF doc to Claude in one request."""
 
 import base64
+import hashlib
 import json
 import os
+import time
 
 from dotenv import load_dotenv
 from perplexity import Perplexity
+
+MODEL_ID = "anthropic/claude-sonnet-4-6"
 
 load_dotenv()
 
@@ -46,12 +50,16 @@ CITY_FILES = {
     "chicago": "chicago_mrf.txt",
 }
 
+_city_doc_hashes: dict[str, str] = {}
+
 for city_key, filename in CITY_FILES.items():
     filepath = os.path.join(DATA_DIR, filename)
     if os.path.exists(filepath):
         with open(filepath, "r", encoding="utf-8") as f:
-            _city_docs[city_key] = f.read()
-        print(f"[classify] loaded {filename} ({len(_city_docs[city_key])} chars)")
+            content = f.read()
+        _city_docs[city_key] = content
+        _city_doc_hashes[city_key] = hashlib.sha256(content.encode()).hexdigest()[:12]
+        print(f"[classify] loaded {filename} ({len(content)} chars, hash={_city_doc_hashes[city_key]})")
 
 
 def _detect_mime_type(image_bytes: bytes) -> str:
@@ -64,15 +72,31 @@ def _detect_mime_type(image_bytes: bytes) -> str:
     return "image/jpeg"
 
 
+class ClassificationError(Exception):
+    """Wraps classify failures with structured retry/permanent hints."""
+
+    def __init__(self, message: str, *, retryable: bool = False, raw: str = ""):
+        super().__init__(message)
+        self.retryable = retryable
+        self.raw = raw
+
+
 def classify_image(image_bytes: bytes, city: str) -> dict:
-    """Single API call: identify item from image + classify against city MRF docs."""
+    """Single API call: identify item from image + classify against city MRF docs.
+
+    Returns dict with keys: item, action, reason, confidence, _meta (timing/model info).
+    Raises ClassificationError on failure.
+    """
+    t0 = time.monotonic()
+
     city_doc = _city_docs.get(city)
     if not city_doc:
-        raise ValueError(f"No MRF document found for city: {city}")
+        raise ClassificationError(f"No MRF document found for city: {city}", retryable=False)
 
     mime_type = _detect_mime_type(image_bytes)
     b64 = base64.b64encode(image_bytes).decode()
     data_uri = f"data:{mime_type};base64,{b64}"
+    t_prep = time.monotonic()
 
     user_prompt = f"""FACILITY SPECS ({city} MRF documentation):
 {city_doc}
@@ -81,25 +105,31 @@ CITY: {city}
 
 Look at the image and classify the waste item based only on the facility specs above."""
 
-    response = pplx_client.responses.create(
-        model="anthropic/claude-sonnet-4-6",
-        instructions=SYSTEM_PROMPT,
-        input=[
-            {
-                "type": "message",
-                "role": "user",
-                "content": [
-                    {"type": "input_text", "text": user_prompt},
-                    {"type": "input_image", "image_url": data_uri},
-                ],
-            }
-        ],
-        max_output_tokens=200,
-    )
+    try:
+        response = pplx_client.responses.create(
+            model=MODEL_ID,
+            instructions=SYSTEM_PROMPT,
+            input=[
+                {
+                    "type": "message",
+                    "role": "user",
+                    "content": [
+                        {"type": "input_text", "text": user_prompt},
+                        {"type": "input_image", "image_url": data_uri},
+                    ],
+                }
+            ],
+            max_output_tokens=200,
+        )
+    except Exception as e:
+        raise ClassificationError(
+            f"Model API error: {e}", retryable=True
+        ) from e
+
+    t_model = time.monotonic()
 
     raw = response.output_text.strip()
 
-    # Strip markdown fences if present
     if raw.startswith("```"):
         raw = raw.split("\n", 1)[-1]
         raw = raw.rsplit("```", 1)[0]
@@ -109,18 +139,30 @@ Look at the image and classify the waste item based only on the facility specs a
         result = json.loads(raw)
     except json.JSONDecodeError:
         print(f"[classify] JSON parse error. Raw: {raw}")
-        return {
-            "item": "unknown item",
-            "action": "TRASH",
-            "reason": "Classification error — defaulting to trash",
-            "confidence": "low",
-        }
+        raise ClassificationError(
+            "Model returned malformed JSON", retryable=True, raw=raw[:500]
+        )
 
-    print(f"[classify] {result.get('item')} → {result.get('action')} ({result.get('confidence')})")
+    t_parse = time.monotonic()
+
+    timings = {
+        "prep_ms": int((t_prep - t0) * 1000),
+        "model_ms": int((t_model - t_prep) * 1000),
+        "parse_ms": int((t_parse - t_model) * 1000),
+        "total_ms": int((t_parse - t0) * 1000),
+        "model": MODEL_ID,
+        "mrf_doc_hash": _city_doc_hashes.get(city, ""),
+    }
+
+    print(
+        f"[classify] {result.get('item')} → {result.get('action')} "
+        f"({result.get('confidence')}) [{timings['total_ms']}ms]"
+    )
 
     return {
         "item": result.get("item", "unknown item"),
         "action": result.get("action", "TRASH"),
         "reason": result.get("reason", "No reason provided"),
         "confidence": result.get("confidence", "low"),
+        "_meta": timings,
     }
